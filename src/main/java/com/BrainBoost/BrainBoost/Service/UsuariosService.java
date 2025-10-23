@@ -30,7 +30,7 @@ public class UsuariosService {
         if(u == null){return null;}
 
         if(valor.contains("@")){u.setEmail(valor); return u;}
-        if(valor.length() >6 ){u.setSenha(valor); return u;}
+        if(valor.length() > 8 && valor.matches(".\\d.*") && valor.matches(".*[^a-zA-Z0-9].*")){u.setSenha(valor); return u;}
         else{u.setNome(valor); return u;}
     }
 

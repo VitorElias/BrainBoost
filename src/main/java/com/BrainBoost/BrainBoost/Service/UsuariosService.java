@@ -24,34 +24,40 @@ public class UsuariosService {
         return u;
     }
 
-    public Usuarios update(long id, String valor){
+    public Usuarios update(long id, Usuarios user){
 
-        Usuarios u = findBy(id);
-        if(u == null){return null;}
+        Usuarios u = findById(id);
 
-        if(valor.contains("@")){u.setEmail(valor); return u;}
-        if(valor.length() > 8 && valor.matches(".\\d.*") && valor.matches(".*[^a-zA-Z0-9].*")){u.setSenha(valor); return u;}
-        else{u.setNome(valor); return u;}
+        if(user.getEmail() != null && !user.getEmail().isBlank()){u.setEmail(user.getEmail());}
+        if(user.getNome() != null && !user.getNome().isBlank()){u.setNome(user.getNome());}
+        if (user.getSenha() != null && !user.getSenha().isBlank()){u.setSenha(user.getSenha());}
+
+        return u;
     }
 
-    public Usuarios findBy(Object valor) {
-        Long numero = null;
-
-        if (valor instanceof Long) {
-            numero = (Long) valor;
+    public Usuarios findById(Long id){
+        for(Usuarios u : usuarios){
+            if(u.getId() == id){
+                return u;
+            }
         }
+        return null;
+    }
 
-        for (Usuarios u : usuarios) {
-            if (numero != null && numero.equals(u.getId())) {return u;}
-            if (valor instanceof String && u.getEmail() != null && u.getEmail().equals(valor)) {return u;}
+    public Usuarios findbyEmail(String email){
+
+        for(Usuarios u : usuarios){
+            if(u.getEmail().equals(email)){
+                return u;
+            }
         }
         return null;
     }
 
     public List<Usuarios> findAll(){return usuarios;}
 
-    public void delete(String valor){
-        Usuarios u = findBy(valor);
+    public void deleteById(Long id){
+        Usuarios u = findById(id);
         usuarios.remove(u);
     }
 

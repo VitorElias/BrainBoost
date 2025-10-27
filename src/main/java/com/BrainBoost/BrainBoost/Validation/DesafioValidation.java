@@ -12,7 +12,6 @@ public class DesafioValidation {
 
     private static final Logger logger = LoggerFactory.getLogger(UsuariosValidator.class);
 
-
     public static void validationDesafio(Desafio desafio){
         if(desafio == null){
             logger.info("ValidationException: O desafio não pode ser nulo");
@@ -46,7 +45,6 @@ public class DesafioValidation {
             logger.info("ValidationException: A data de expiração não pode ser anterior a data atual");
             throw new DesafioDataInvalidaException("A data de expiração não pode ser anterior a data atual");
         }
-
     }
     public static void validationId(Long id){
         if(id == null){
@@ -58,5 +56,4 @@ public class DesafioValidation {
             throw new ValidationException("O id deve ser um numero maior que 0");
         }
     }
-
 }

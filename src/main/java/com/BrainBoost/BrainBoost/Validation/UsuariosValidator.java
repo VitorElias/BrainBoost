@@ -8,7 +8,6 @@ public class UsuariosValidator {
 
     private static final Logger logger = LoggerFactory.getLogger(UsuariosValidator.class);
 
-
     public static void validarEmail(String email) {
 
         if (email == null || email.isBlank()){
@@ -31,8 +30,6 @@ public class UsuariosValidator {
             throw new ValidationException("Email não pode conter espaços");
         }
     }
-
-
     public static void validarSenha(String senha){
 
         if(senha == null || senha.isBlank()) {
@@ -52,7 +49,6 @@ public class UsuariosValidator {
             throw new ValidationException("A senha não pode estar vazia!");
         }
     }
-
     public static void validarNome(String nome){
 
         if(nome == null || nome.isBlank()){
@@ -68,7 +64,6 @@ public class UsuariosValidator {
             throw new ValidationException("O nome deve ter no minimo 3 caracteres e no máximo 255!");
         }
     }
-
     public static void validarId(Long id) {
         if (id == null){
             logger.warn("verificação de id: tentativa de id vazio ou nula");

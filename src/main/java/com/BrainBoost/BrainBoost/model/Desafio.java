@@ -8,7 +8,6 @@ public class Desafio implements Serializable {
 
     private static final long serialVersionUID = 1l;
 
-
     private Long id;
     private String titulo;
     private String descricao;

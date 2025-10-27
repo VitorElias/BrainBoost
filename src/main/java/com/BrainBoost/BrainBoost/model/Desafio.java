@@ -2,6 +2,7 @@ package com.BrainBoost.BrainBoost.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Desafio implements Serializable {
 
@@ -36,4 +37,74 @@ public class Desafio implements Serializable {
         this.pontuacao = pontuacao;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public LocalDateTime getDateExpiracao() {
+        return dateExpiracao;
+    }
+
+    public void setDateExpiracao(LocalDateTime dateExpiracao) {
+        this.dateExpiracao = dateExpiracao;
+    }
+
+    public int getPontuacao() {
+        return pontuacao;
+    }
+
+    public void setPontuacao(int pontuacao) {
+        this.pontuacao = pontuacao;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Desafio desafio)) return false;
+        return Objects.equals(id, desafio.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Desafio{" +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", dataCriacao=" + dataCriacao +
+                ", dateExpiracao=" + dateExpiracao +
+                ", pontuacao=" + pontuacao +
+                '}';
+    }
 }

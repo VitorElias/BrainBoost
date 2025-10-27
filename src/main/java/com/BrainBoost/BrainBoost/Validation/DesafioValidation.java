@@ -5,7 +5,6 @@ import com.BrainBoost.BrainBoost.Exceptions.ValidationException;
 import com.BrainBoost.BrainBoost.model.Desafio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 
@@ -59,5 +58,5 @@ public class DesafioValidation {
             throw new ValidationException("O id deve ser um numero maior que 0");
         }
     }
-    }
+
 }

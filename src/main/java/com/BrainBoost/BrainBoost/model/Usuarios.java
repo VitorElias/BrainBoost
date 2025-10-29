@@ -1,17 +1,33 @@
 package com.BrainBoost.BrainBoost.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Entity
+@Table(name = "Usuario")
 public class Usuarios implements Serializable {
 
     private static final long serialVersionUID = 1l;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column(name = "nome", nullable = false)
     private String nome;
+
+    @Column(name = "email",unique = true,nullable = false)
     private String email;
+
+    @Column(name = "senha",nullable = false)
     private String senha;
+
+    @Column(name = "pontuacao")
     private int pontuacao;
+
+    @Column(name = "nivel")
     private int nível;
 
     public Usuarios() {}

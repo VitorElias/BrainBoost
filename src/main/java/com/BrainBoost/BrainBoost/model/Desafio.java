@@ -1,22 +1,39 @@
 package com.BrainBoost.BrainBoost.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
+@Table(name = "Desafios")
 public class Desafio implements Serializable {
 
     private static final long serialVersionUID = 1l;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "titulo")
     private String titulo;
+
+    @Column(name = "descricao")
     private String descricao;
+
+    @Column(name = "dataCriacao")
     @JsonFormat(pattern = "dd/MM/yyyy")
+    @Temporal(TemporalType.DATE)
     private LocalDate dataCriacao;
+
+    @Column(name = "DataExpiracao")
     @JsonFormat(pattern = "dd/MM/yyyy")
+    @Temporal(TemporalType.DATE)
     private LocalDate dateExpiracao;
+
+    @Column(name = "pontuacao")
     private int pontuacao;
 
 

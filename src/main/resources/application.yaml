@@ -2,3 +2,8 @@ spring:
   application:
     name=BrainBoost
 
+
+  logging:
+    level:
+      root: WARN
+      com.BrainBoost.BrainBoost: DEBUG

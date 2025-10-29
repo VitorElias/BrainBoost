@@ -6,7 +6,10 @@ import com.BrainBoost.BrainBoost.model.Desafio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class DesafioValidation {
 
@@ -38,10 +41,10 @@ public class DesafioValidation {
             throw new ValidationException("A pontuação não pode ser menor que 0 ou maior que 100!");
         }
         if(desafio.getDateExpiracao() == null){
-            logger.info("ValidationException: A data não pode ser nula");
+            logger.info("ValidationException: A data não pode ser nula data={}",desafio.getDateExpiracao());
             throw new ValidationException("A data não pode ser nula");
         }
-        if(desafio.getDateExpiracao().isBefore(LocalDateTime.now())){
+        if(desafio.getDateExpiracao().isBefore(LocalDate.now())){
             logger.info("ValidationException: A data de expiração não pode ser anterior a data atual");
             throw new DesafioDataInvalidaException("A data de expiração não pode ser anterior a data atual");
         }
@@ -56,4 +59,6 @@ public class DesafioValidation {
             throw new ValidationException("O id deve ser um numero maior que 0");
         }
     }
+
+
 }

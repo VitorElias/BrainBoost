@@ -1,4 +1,4 @@
-package com.BrainBoost.BrainBoost.model;
+package com.BrainBoost.BrainBoost.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Desafio implements Serializable {
+public class DesafioDTO implements Serializable {
 
     private static final long serialVersionUID = 1l;
 
@@ -20,10 +20,11 @@ public class Desafio implements Serializable {
     private int pontuacao;
 
 
-    public Desafio() {
+    public DesafioDTO() {
     }
 
-    public Desafio(String titulo, String descricao, LocalDate dataCriacao, LocalDate dateExpiracao, int pontuacao) {
+    public DesafioDTO(Long id, String titulo, String descricao, LocalDate dataCriacao, LocalDate dateExpiracao, int pontuacao) {
+        this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.dataCriacao = dataCriacao;
@@ -31,8 +32,7 @@ public class Desafio implements Serializable {
         this.pontuacao = pontuacao;
     }
 
-    public Desafio(Long id, String titulo, String descricao, LocalDate dataCriacao, LocalDate dateExpiracao, int pontuacao) {
-        this.id = id;
+    public DesafioDTO(String titulo, String descricao, LocalDate dataCriacao, LocalDate dateExpiracao, int pontuacao) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.dataCriacao = dataCriacao;
@@ -90,24 +90,12 @@ public class Desafio implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Desafio desafio)) return false;
-        return Objects.equals(id, desafio.id);
+        if (!(o instanceof DesafioDTO that)) return false;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Desafio{" +
-                "id=" + id +
-                ", titulo='" + titulo + '\'' +
-                ", descricao='" + descricao + '\'' +
-                ", dataCriacao=" + dataCriacao +
-                ", dateExpiracao=" + dateExpiracao +
-                ", pontuacao=" + pontuacao +
-                '}';
     }
 }

@@ -29,6 +29,24 @@ public class CustomExceptionHandler{
         ResponseEntityCustom rec= new ResponseEntityCustom(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(rec, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(DesafioDataInvalidaException.class)
+    public ResponseEntity<ResponseEntityCustom> desafioDataInvalidaException(DesafioDataInvalidaException ex, WebRequest request){
+        logger.warn("DesafioDataInvalidaException: {} - {}", ex.getMessage(), request.getDescription(false));
+        ResponseEntityCustom rec= new ResponseEntityCustom(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(rec, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(DesafioNotFoundException.class)
+    public ResponseEntity<ResponseEntityCustom> desafioNotFoundException(DesafioNotFoundException ex, WebRequest request){
+        logger.warn("DesafioNotFoundException: {} - {}", ex.getMessage(), request.getDescription(false));
+        ResponseEntityCustom rec= new ResponseEntityCustom(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(rec, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(RespostaNotFoundException.class)
+    public ResponseEntity<ResponseEntityCustom> RespostaNotFound(RespostaNotFoundException ex, WebRequest request) {
+        logger.warn("RespostaNotFound: {} - {}", ex.getMessage(), request.getDescription(false));
+        ResponseEntityCustom rec = new ResponseEntityCustom(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(rec, HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ResponseEntityCustom> runtime(RuntimeException ex, WebRequest request){

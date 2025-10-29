@@ -1,22 +1,23 @@
 package com.BrainBoost.BrainBoost.Service;
 
 import com.BrainBoost.BrainBoost.Exceptions.RespostaNotFoundException;
+import com.BrainBoost.BrainBoost.Repository.RespostaRepository;
 import com.BrainBoost.BrainBoost.Validation.RespostaValidation;
 import com.BrainBoost.BrainBoost.data.dto.RespostaDTO;
 import com.BrainBoost.BrainBoost.mapper.ObjectMapper;
 import com.BrainBoost.BrainBoost.model.Desafio;
 import com.BrainBoost.BrainBoost.model.Resposta;
 import com.BrainBoost.BrainBoost.model.Usuarios;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
+@Transactional
 public class RespostaService {
 
     @Autowired
@@ -25,9 +26,11 @@ public class RespostaService {
     @Autowired
     UsuariosService us;
 
+    @Autowired
+    RespostaRepository respostaRepository;
+
     private static Logger logger = LoggerFactory.getLogger(RespostaService.class);
-    private List<Resposta> respostas = new ArrayList<>();
-    private AtomicLong al = new AtomicLong(0);
+
 
     public RespostaDTO createResposta(RespostaDTO respostaDTO) {
         logger.info("Iniciando as validações");
@@ -39,9 +42,8 @@ public class RespostaService {
         logger.info("Criando o objeto e salvando no banco");
         Resposta respFinal = mapDtoToEntity(respostaDTO);
 
-        respFinal.setId(al.addAndGet(1));
         respFinal.setDataEnvio(LocalDate.now());
-        respostas.add(respFinal);
+        respostaRepository.save(respFinal);
 
         logger.info("Objeto criado! Retornando DTO.");
         return toDTO(respFinal);
@@ -78,14 +80,13 @@ public class RespostaService {
     public RespostaDTO findById(Long id){return toDTO(findByIdResposta(id));}
 
     public List<RespostaDTO> findAll(){
-        return respostas.stream()
+        return respostaRepository.findAll().stream()
                 .map(this::toDTO)
                 .toList();
     }
 
     public void delete(Long id){
-        Resposta resp = findByIdResposta(id);
-        respostas.remove(resp);
+        respostaRepository.deleteById(id);
     }
 
     private RespostaDTO toDTO(Resposta resp) {
@@ -111,9 +112,7 @@ public class RespostaService {
     }
 
     private Resposta findByIdResposta(Long id){
-        return respostas.stream()
-                .filter(r -> r.getId().equals(id))
-                .findFirst()
+        return respostaRepository.findById(id)
                 .orElseThrow(() -> new RespostaNotFoundException("Não foi encontrado no banco de dados!"));
     }
 

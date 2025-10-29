@@ -3,24 +3,26 @@ package com.BrainBoost.BrainBoost.Service;
 
 import com.BrainBoost.BrainBoost.Exceptions.NotFoundException;
 import com.BrainBoost.BrainBoost.Exceptions.ValidationException;
+import com.BrainBoost.BrainBoost.Repository.UsuariosRepository;
 import com.BrainBoost.BrainBoost.Validation.UsuariosValidator;
+import com.BrainBoost.BrainBoost.data.dto.DesafioDTO;
 import com.BrainBoost.BrainBoost.data.dto.UsuarioCreateDTO;
 import com.BrainBoost.BrainBoost.data.dto.UsuarioDTO;
 import com.BrainBoost.BrainBoost.mapper.ObjectMapper;
 import com.BrainBoost.BrainBoost.model.Usuarios;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
+@Transactional
 public class UsuariosService {
 
-    List<Usuarios> usuarios = new ArrayList<>();
-    AtomicLong al = new AtomicLong(0);
-
+    @Autowired
+    UsuariosRepository usuariosRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UsuariosService.class);
 
@@ -32,8 +34,9 @@ public class UsuariosService {
         UsuariosValidator.validarEmail(email);
         UsuariosValidator.validarSenha(senha);
 
-        Usuarios u = new Usuarios(al.addAndGet(1),nome,email,senha);
-        usuarios.add(u);
+        Usuarios u = new Usuarios(nome,email,senha);
+
+        usuariosRepository.save(u);
 
         UsuarioDTO usuarioDTO = ObjectMapper.parseObjetct(u,UsuarioDTO.class);
 
@@ -69,10 +72,10 @@ public class UsuariosService {
         logger.info("Buscando usuario no bd: {}",id);
         UsuariosValidator.validarId(id);
 
-        for(Usuarios u : usuarios){
-            if(u.getId() == id){
-                return ObjectMapper.parseObjetct(u,UsuarioDTO.class);
-            }
+        UsuarioDTO def =  ObjectMapper.parseObjetct(findByIdUsuarios(id),UsuarioDTO.class);
+
+        if(def != null){
+            return def;
         }
         logger.warn("Tentativa falha de acessar o banco pelo id: {}",id);
         throw new NotFoundException("O id digitado não foi encontrado!");
@@ -83,12 +86,15 @@ public class UsuariosService {
         logger.info("Buscando usuario no bd: {}",email);
         UsuariosValidator.validarEmail(email);
 
-        for(Usuarios u : usuarios){
-            if(u.getEmail().equals(email)){
-                logger.info("Usuario encontrado : {}",u.getId());
-                return ObjectMapper.parseObjetct(u, UsuarioDTO.class);
-            }
+        Usuarios us = usuariosRepository.findByEmail(email)
+                .orElseThrow(() -> new ValidationException("Erro: não foi encontrado no banco de dados!"));
+
+        UsuarioDTO def =  ObjectMapper.parseObjetct(us,UsuarioDTO.class);
+
+        if(def != null){
+            return def;
         }
+
         logger.warn("Tentativa falha de acessar o banco pelo email: {}",email);
         throw new NotFoundException("O email digitado não foi encontrado!");
     }
@@ -96,22 +102,20 @@ public class UsuariosService {
     public List<UsuarioDTO> findAll(){
 
         logger.info("Buscando todos os usuarios no banco");
-        return ObjectMapper.parseListObjetcts(usuarios,UsuarioDTO.class);
+        return ObjectMapper.parseListObjetcts(usuariosRepository.findAll(),UsuarioDTO.class);
     }
 
     public void deleteById(Long id){
 
         logger.info("Deletando usuario pelo ID: {}",id);
         Usuarios u = findByIdUsuarios(id);
-        usuarios.remove(u);
+        usuariosRepository.deleteById(id);
         logger.info("usuario removido id: {}",u.getId());
     }
 
     public Usuarios findByIdUsuarios(Long id){
-        return usuarios.stream()
-                .filter(r -> r.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Não foi encontrado no banco de dados!"));
+        return usuariosRepository.findById(id)
+                .orElseThrow(() -> new ValidationException("Erro: não foi encontrado no banco de dados!"));
     }
 
 

@@ -2,27 +2,28 @@ package com.BrainBoost.BrainBoost.Service;
 
 
 import com.BrainBoost.BrainBoost.Exceptions.DesafioNotFoundException;
-import com.BrainBoost.BrainBoost.Exceptions.RespostaNotFoundException;
+import com.BrainBoost.BrainBoost.Exceptions.ValidationException;
+import com.BrainBoost.BrainBoost.Repository.DesafioRepository;
 import com.BrainBoost.BrainBoost.Validation.DesafioValidation;
 import com.BrainBoost.BrainBoost.data.dto.DesafioDTO;
 import com.BrainBoost.BrainBoost.mapper.ObjectMapper;
 import com.BrainBoost.BrainBoost.model.Desafio;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
+@Transactional
 public class DesafioService {
 
     private static final Logger logger = LoggerFactory.getLogger(DesafioService.class);
 
-    private AtomicLong al = new AtomicLong(0);
-    private List<Desafio> desafios = new ArrayList<>();
+    @Autowired
+    DesafioRepository desafioRepository;
 
     public DesafioDTO create(DesafioDTO desafio){
 
@@ -35,10 +36,12 @@ public class DesafioService {
 
         DesafioValidation.validationDesafio(def);
 
-        Desafio d = new Desafio(al.addAndGet(1),def.getTitulo(),def.getDescricao(), LocalDate.now(),desafio.getDateExpiracao(),def.getPontuacao());
-        desafios.add(d);
-        logger.info("Desafio criado com sucesso = {}",d.toString());
+        Desafio d = new Desafio(def.getTitulo(),def.getDescricao(), LocalDate.now(),desafio.getDateExpiracao(),def.getPontuacao());
 
+        logger.info("Desafio salvo no banco de dados = {}",d.toString());
+        desafioRepository.save(d);
+
+        logger.info("Desafio criado com sucesso = {}",d.toString());
         return ObjectMapper.parseObjetct(d,DesafioDTO.class);
     }
 
@@ -58,6 +61,8 @@ public class DesafioService {
 
         logger.info("Atualizando o objeto com novos dados");
 
+        desafioRepository.save(desafioExistente);
+
         return ObjectMapper.parseObjetct(desafioExistente, DesafioDTO.class);
     }
 
@@ -67,18 +72,18 @@ public class DesafioService {
         logger.info("Realizando a validação do id={}",id);
         DesafioValidation.validationId(id);
 
-        for(Desafio des: desafios){
-            if(des.getId().equals(id)){
-                return ObjectMapper.parseObjetct(des,DesafioDTO.class);
-            }
+        DesafioDTO def =  ObjectMapper.parseObjetct(findByIdDesafio(id),DesafioDTO.class);
+
+        if(def == null) {
+            logger.warn("Nao foi encontrado no banco de dados o id={}", id);
+            throw new DesafioNotFoundException("Não foi encontrado no banco de dados");
         }
-        logger.warn("Nao foi encontrado no banco de dados o id={}",id);
-        throw new DesafioNotFoundException("Não foi encontrado no banco de dados");
+        return def;
     }
 
     public List<DesafioDTO> listAll(){
         logger.info("Listando todos os desafios");
-        return ObjectMapper.parseListObjetcts(desafios,DesafioDTO.class);
+        return ObjectMapper.parseListObjetcts(desafioRepository.findAll(),DesafioDTO.class);
     }
 
     public String deleteById(Long id){
@@ -86,19 +91,16 @@ public class DesafioService {
         logger.info("Validando ID");
         DesafioValidation.validationId(id);
 
-        logger.info("Buscando o Desafio com o id={}",id);
-        Desafio d = findByIdDesafio(id);
         logger.info("Removendo o desafio");
-        desafios.remove(d);
+        desafioRepository.deleteById(id);
 
         return "deu certo";
     }
 
     public Desafio findByIdDesafio(Long id){
-        return desafios.stream()
-                .filter(r -> r.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new RespostaNotFoundException("Não foi encontrado no banco de dados!"));
+       return desafioRepository.findById(id)
+               .orElseThrow(() -> new ValidationException("Erro, não foi encontrado no banco de dados"));
+
     }
 
 
